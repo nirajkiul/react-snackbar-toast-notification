@@ -1,0 +1,147 @@
+====== react-snackbar-toast-notification\src\components\Snackbar.js ======
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import './Snacbar.css';
+
+const Snackbar = forwardRef((props, ref) => {
+	const [showSnackbar, setShowSnackbar] = useState(false);
+	
+	useImperativeHandle(ref, ()=> ({
+		show() {
+			setShowSnackbar(true);
+		}
+		setTimeout(() => {
+			setShowSnackbar(false);
+		}, 3000)
+	}));
+	
+	return (
+		<div className="snackbar"
+			id={showSnackbar ? "show" : "hide"}
+			style={{
+				backgroundColor: props.type === "success" ? "#00F593" : "#FF0033",
+				color: props.type === "success" ? "black" : "white",
+			}}
+		>
+			<div className="symbol">
+				{props.type === "success" ? <h1>&#x2713;</h1> : <h1>&#x2613;</h1>}
+			</div>
+			<div className="message"> {props.message} </div>
+		</div>
+	);
+});
+
+export default Snackbar;
+
+===== react-snackbar-toast-notification\src\components\Snackbar.css ======
+.snackbar {
+	position:fixed;
+	left: 50%;
+	top: 5%;
+	transform: translate(-50%,-50%);
+	width: 350px;
+	height: 60px;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	text-align: center;
+}
+
+.snackbar .symbol {
+	flex: 20%;
+}
+
+.snackbar .message {
+	flex: 80%;
+	text-align: start;
+	font-weight: bold;
+}
+
+#show {
+	visibility: visible;
+	animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+}
+
+#hide {
+	visibility: hidden;
+}
+
+@keyframes fadeIn {
+	from {
+		bottom: 0;
+		opacity: 0;
+	}
+	to {
+		bottom: 30px;
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	from {
+		bottom: 30px;
+		opacity: 1;
+	}
+	to {
+		bottom: 0;
+		opacity: 0;
+	}
+}
+
+====== snackbar-toast-notification\src\App.js ======
+import { useRef } from "react";
+import "./App.css";
+import Snackbar from "./components/Snackbar";
+
+const SnackbarType = {
+	success: "success",
+	fail: "fail"
+}
+
+function App() {
+	const snackbarRef = useRef(null);
+	
+	return (
+		<div className="App">
+			<button 
+				className="showSnackbarbttn"
+				onClick={()=>{
+					snackbarRef.current.show();
+				}}
+			>
+				Show Snackbar
+			</button>
+			
+			<Snackbar
+				ref={snackbarRef}
+				message="Task Completed asuccesfully"
+				type={SnackbarType.fail}
+			/>	
+		</div>
+	);
+}
+
+===== react-snackbar-toast-notification\src\components\App.css =====
+.App {
+	width: 100vw;
+	height: 100vh;
+	font-family: Arial, Helvetica;
+	background-color: #18191a;
+	display: grid;
+	place-items: center;
+}
+
+body {
+	padding: 0%;
+	margin: 0%;
+}
+
+.showSnackbarBttn {
+	width: 200px;
+	height: 50px;
+	background-color: cornflowerblue;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	color: white;
+	font-size: 20px;
+}
